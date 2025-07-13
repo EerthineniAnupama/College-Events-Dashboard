@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>College Events Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+
+  <!-- Navbar -->
+  <nav class="bg-blue-800 text-white px-8 py-6 flex justify-between items-center shadow-lg">
+    <h1 class="text-4xl font-bold">🎓 College Events</h1>
+    <div class="space-x-8">
+      <a href="/login" class="hover:underline text-xl">Login</a>
+      <a href="/register" class="hover:underline text-xl">Register</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="bg-white text-center py-24 px-8 shadow-md">
+    <h2 class="text-6xl font-bold text-blue-800 mb-8">Welcome to the Events Dashboard</h2>
+    <p class="text-gray-700 text-xl max-w-4xl mx-auto">
+      Discover amazing campus events. Register, attend, and never miss out!
+    </p>
+  </section>
+
+  <!-- Upcoming Events Section -->
+  <section class="py-20 px-8 max-w-7xl mx-auto">
+    <h3 class="text-4xl font-semibold text-gray-800 mb-10">📅 Upcoming Events</h3>
+    <div id="eventsContainer" class="grid md:grid-cols-3 gap-12"></div>
+    <p id="noEventsMsg" class="text-center text-gray-500 hidden text-lg">No upcoming events found.</p>
+  </section>
+
+  <!-- Modal for login prompt -->
+  <div id="loginPromptModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div class="bg-white p-10 rounded-lg max-w-md w-full shadow-lg text-center">
+      <h2 class="text-2xl font-semibold mb-6 text-blue-800">🔒 Please Login or Register</h2>
+      <p class="mb-6 text-gray-600">You need to be logged in to view event details.</p>
+      <div class="flex justify-center gap-6">
+        <a href="/login" class="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition">Login</a>
+        <a href="/register" class="bg-gray-300 text-gray-800 px-6 py-3 rounded hover:bg-gray-400 transition">Register</a>
+      </div>
+      <button onclick="closeModal()" class="mt-4 text-sm text-gray-500 hover:underline">Close</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white text-center py-6 mt-10">
+    &copy; 2025 College Events Dashboard. All rights reserved.
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    async function fetchUpcomingEvents() {
+      try {
+        const response = await fetch('/api/events/upcoming-events');
+        const data = await response.json();
+
+        const container = document.getElementById('eventsContainer');
+        const noEventsMsg = document.getElementById('noEventsMsg');
+
+        if (!data || data.length === 0) {
+          noEventsMsg.classList.remove('hidden');
+          return;
+        }
+
+        container.innerHTML = ""; // Clear previous content
+
+        data.slice(0, 3).forEach(event => {
+          const imageSrc = event.image_url
+            ? event.image_url.replaceAll('\\\\', '/').replaceAll('\\', '/')
+            : '/static/uploads/default.png';
+
+          const card = document.createElement('div');
+          card.className = "bg-white rounded-lg shadow-lg hover:shadow-xl transition overflow-hidden";
+
+          card.innerHTML = `
+            <img src="${imageSrc}" alt="${event.title}" class="w-full h-56 object-cover">
+            <div class="p-6">
+              <h4 class="text-3xl font-semibold text-blue-600">${event.title}</h4>
+              <p class="text-lg text-gray-500 mt-1">${event.date} · ${event.venue}</p>
+              <p class="text-gray-700 mt-3 text-lg">${event.description?.substring(0, 100) || ''}...</p>
+              <div class="mt-6 flex flex-wrap justify-between gap-3">
+                <button onclick="handleViewDetails('${event.id}')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">View Details</button>
+                <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Add to Calendar</button>
+                <button class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">Unregister</button>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (error) {
+        console.error('❌ Failed to fetch events:', error);
+        document.getElementById('noEventsMsg').classList.remove('hidden');
+      }
+    }
+
+    function handleViewDetails(eventId) {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user.email) {
+        document.getElementById('loginPromptModal').classList.remove('hidden');
+      } else {
+        window.location.href = `/view-event/${eventId}`;
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('loginPromptModal').classList.add('hidden');
+    }
+
+    fetchUpcomingEvents();
+  </script>
+
+</body>
+</html>

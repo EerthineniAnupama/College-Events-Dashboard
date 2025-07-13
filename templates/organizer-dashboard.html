@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Organizer Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+  <!-- Navbar -->
+  <nav class="bg-blue-700 text-white px-6 py-4 flex justify-between items-center shadow">
+    <h1 class="text-xl font-bold">📢 Organizer Dashboard</h1>
+    <a href="#" onclick="logout()" class="hover:underline">Logout</a>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 py-10">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-semibold text-blue-700">My Events</h2>
+      <a href="/create-event" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">+ Create Event</a>
+    </div>
+    <div id="eventList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </main>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <div class="bg-white p-6 rounded shadow max-w-md w-full">
+      <h3 class="text-lg font-semibold mb-4">Edit Event</h3>
+      <input id="editTitle" type="text" placeholder="Title" class="w-full border px-3 py-2 rounded mb-2" />
+      <input id="editDate" type="date" class="w-full border px-3 py-2 rounded mb-2" />
+      <input id="editVenue" type="text" placeholder="Venue" class="w-full border px-3 py-2 rounded mb-2" />
+      <textarea id="editDesc" placeholder="Description" class="w-full border px-3 py-2 rounded mb-4"></textarea>
+      <div class="flex justify-end gap-3">
+        <button onclick="closeModal()" class="text-gray-600">Cancel</button>
+        <button onclick="saveChanges()" class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-gray-800 text-white text-center py-4 mt-10">
+    &copy; 2025 Events Dashboard
+  </footer>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("user"));
+    const container = document.getElementById("eventList");
+
+    let currentEditId = null;
+
+    function logout() {
+      if (confirm("Log out?")) {
+        localStorage.removeItem("user");
+        window.location.href = "/";
+      }
+    }
+
+    async function loadEvents() {
+      const res = await fetch(`http://127.0.0.1:5000/api/events/by-organizer?name=${encodeURIComponent(user.name)}`);
+      const events = await res.json();
+      container.innerHTML = "";
+      events.forEach(event => {
+        const card = document.createElement("div");
+        card.className = "bg-white p-4 rounded shadow";
+        card.innerHTML = `
+          <h3 class="text-lg font-semibold text-blue-600">${event.title}</h3>
+          <p class="text-sm text-gray-500">${event.date} · ${event.venue}</p>
+          <p class="text-gray-700 mt-2">${event.description}</p>
+          <div class="flex justify-between mt-4 text-sm">
+            <a href="#" onclick="openEditModal(${event.id}, '${event.title}', '${event.date}', '${event.venue}', \`${event.description}\`)" class="text-blue-600 hover:underline">Edit</a>
+            <a href="#" onclick="deleteEvent(${event.id})" class="text-red-600 hover:underline">Delete</a>
+            <a href="#" onclick="viewRegistrations(${event.id})" class="text-green-600 hover:underline">View Registrations</a>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openEditModal(id, title, date, venue, desc) {
+      currentEditId = id;
+      document.getElementById("editTitle").value = title;
+      document.getElementById("editDate").value = date;
+      document.getElementById("editVenue").value = venue;
+      document.getElementById("editDesc").value = desc;
+      document.getElementById("editModal").classList.remove("hidden");
+    }
+
+    function closeModal() {
+      document.getElementById("editModal").classList.add("hidden");
+    }
+
+    async function saveChanges() {
+      const updatedEvent = {
+        title: document.getElementById("editTitle").value,
+        date: document.getElementById("editDate").value,
+        venue: document.getElementById("editVenue").value,
+        description: document.getElementById("editDesc").value
+      };
+      const res = await fetch(`http://127.0.0.1:5000/api/events/${currentEditId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedEvent)
+      });
+      if (res.ok) {
+        closeModal();
+        loadEvents();
+      } else {
+        alert("Failed to update event");
+      }
+    }
+
+    async function deleteEvent(id) {
+      if (confirm("Are you sure to delete this event?")) {
+        await fetch(`http://127.0.0.1:5000/api/events/${id}`, { method: "DELETE" });
+        loadEvents();
+      }
+    }
+
+    async function viewRegistrations(eventId) {
+      const res = await fetch(`http://127.0.0.1:5000/api/events/${eventId}/registrations`);
+      const list = await res.json();
+      alert("Registered Students:\n\n" + list.map(l => l.student_email).join("\n") || "None");
+    }
+
+    window.onload = loadEvents;
+  </script>
+</body>
+</html>

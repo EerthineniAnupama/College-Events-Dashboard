@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Event Details</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+  <!-- Navbar -->
+  <nav class="bg-blue-700 text-white px-6 py-4 flex justify-between items-center shadow">
+    <h1 class="text-2xl font-bold">📌 Event Details</h1>
+    <a href="/browse-events" class="hover:underline text-lg">← Back to Events</a>
+  </nav>
+  
+  <!-- Event Modal (fullscreen) -->
+  <div id="eventModal" class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center px-4">
+    <div class="bg-white w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl shadow-xl p-6 relative">
+      <button onclick="closeEventModal()" class="absolute top-4 right-4 text-xl text-gray-500 hover:text-red-600">✖</button>
+      
+      <!-- Event Image -->
+      <img id="modalImage" class="w-full h-80 object-cover rounded-lg mb-4" src="/static/default.jpg" alt="Event Image"/>
+      
+      <!-- Event Details -->
+      <h2 id="modalTitle" class="text-3xl font-bold text-blue-700 mb-2"></h2>
+      <p id="modalDate" class="text-gray-600 mb-1 text-base"></p>
+      <p id="modalVenue" class="text-gray-600 mb-4 text-base"></p>
+      <p id="modalDescription" class="text-lg text-gray-800 leading-relaxed whitespace-pre-line mb-6"></p>
+      
+      <!-- Organizer Information -->
+      <div class="mb-6 text-sm text-gray-600">
+        <p><strong>Organizer:</strong> <span id="organizer"></span></p>
+        <p><strong>Email:</strong> <span id="contactEmail"></span></p>
+        <p><strong>Phone:</strong> <span id="contactPhone"></span></p>
+      </div>
+      
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap gap-4 mb-6">
+        <button id="modalRegisterBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">Register</button>
+        <button id="modalUnregisterBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded shadow">Unregister</button>
+        <button id="modalCalendarBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow">Add to Calendar</button>
+      </div>
+      
+      <!-- Comments Section -->
+      <section>
+        <h3 class="text-xl font-semibold text-blue-600 mb-2">💬 Comments</h3>
+        <ul id="modalComments" class="space-y-2 mb-4 text-sm text-gray-700"></ul>
+        <textarea id="modalCommentInput" rows="3" placeholder="Write a comment..."
+          class="w-full border px-3 py-2 rounded focus:ring-blue-500 mb-2"></textarea>
+        <button onclick="postModalComment()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Post Comment</button>
+      </section>
+    </div>
+  </div>
+
+  <!-- JS Logic -->
+  <script>
+    // Get event and user data from localStorage
+    const event = JSON.parse(localStorage.getItem("selectedEvent"));
+    const user = JSON.parse(localStorage.getItem("user"));
+    
+    // Redirect if data is missing
+    if (!event || !user || !user.email) {
+      alert("User or event data missing. Redirecting...");
+      window.location.href = "/browse-events";
+    }
+    
+    // Populate modal with event data
+    document.getElementById("modalImage").src = event.image_url?.replaceAll("\\", "/") || "/static/default.jpg";
+    document.getElementById("modalTitle").textContent = event.title;
+    document.getElementById("modalDate").textContent = `📅 ${event.date}`;
+    document.getElementById("modalVenue").textContent = `📍 ${event.venue}`;
+    document.getElementById("modalDescription").textContent = event.description;
+    document.getElementById("organizer").textContent = event.organizer || "N/A";
+    document.getElementById("contactEmail").textContent = event.contact_email || "N/A";
+    document.getElementById("contactPhone").textContent = event.contact_phone || "N/A";
+    
+    // Set button handlers
+    document.getElementById("modalRegisterBtn").onclick = () => registerEvent(event.id);
+    document.getElementById("modalUnregisterBtn").onclick = () => unregisterEvent(event.id);
+    document.getElementById("modalCalendarBtn").onclick = () => addToCalendar(event);
+    
+    // Close modal function
+    function closeEventModal() {
+      window.location.href = "/browse-events";
+    }
+    
+    // Load comments from API
+    async function loadModalComments(eventId) {
+      try {
+        const res = await fetch(`/api/events/comments/${eventId}`);
+        const comments = await res.json();
+        const list = document.getElementById("modalComments");
+        list.innerHTML = comments.length
+          ? comments.map(c => `<li><b>${c.student_email}:</b> ${c.content}</li>`).join("")
+          : "<li class='text-gray-500'>No comments yet.</li>";
+      } catch (e) {
+        console.error("Error loading comments", e);
+      }
+    }
+    
+    // Post new comment
+    async function postModalComment() {
+      const content = document.getElementById("modalCommentInput").value.trim();
+      if (!content || !user) return alert("Please login and write a comment!");
+      
+      const payload = {
+        event_id: event.id,
+        email: user.email,
+        content
+      };
+      
+      try {
+        const res = await fetch("/api/events/comment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        
+        if (res.ok) {
+          document.getElementById("modalCommentInput").value = "";
+          loadModalComments(event.id);
+        } else {
+          const error = await res.json();
+          alert("❌ " + (error?.error || "Failed to post comment."));
+        }
+      } catch (err) {
+        alert("❌ Network error while posting comment.");
+        console.error(err);
+      }
+    }
+    
+    // Register for event
+    function registerEvent(id) {
+      fetch("/api/events/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ event_id: id, student_email: user.email })
+      }).then(res => res.json()).then(() => alert("✅ Registered!"));
+    }
+    
+    // Unregister from event
+    function unregisterEvent(id) {
+      fetch("/api/events/unregister", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ event_id: id, student_email: user.email })
+      }).then(res => res.json()).then(() => alert("❌ Unregistered!"));
+    }
+    
+    // Add event to calendar
+    function addToCalendar(event) {
+      const link = document.createElement("a");
+      const icsData = `
+BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+SUMMARY:${event.title}
+DTSTART:${new Date(event.date).toISOString().replace(/[-:]/g, '').split('.')[0]}
+DESCRIPTION:${event.description}
+LOCATION:${event.venue}
+END:VEVENT
+END:VCALENDAR
+      `.trim();
+      
+      const blob = new Blob([icsData], { type: 'text/calendar' });
+      link.href = URL.createObjectURL(blob);
+      link.download = `${event.title}.ics`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    
+    // Load comments on page load
+    loadModalComments(event.id);
+  </script>
+</body>
+</html>
