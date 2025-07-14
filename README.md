@@ -8,105 +8,92 @@ An interactive full-stack web application for managing and participating in coll
 
 ### 👨‍🎓 For Students:
 - 🔍 **Browse Events**: Filter and search upcoming events by date, title, or venue.
-- 📝 **Register & Unregister**: Join events directly from the dashboard.
-- 💬 **Comment System**: Post and view feedback for any event.
-- 📅 **Calendar Integration**: See all registered events in a calendar view.
-- 📥 **Add to Google/Local Calendar**: Download `.ics` calendar files.
-- 🖼️ **View Event Details**: Including image, organizer contact, and full description.
+- 📝 **Register & Unregister**: Join or leave events with one click.
+- 💬 **Comment System**: Post and view feedback for events.
+- 📅 **Calendar Integration**: View registered events in calendar format.
+- 📥 **Add to Calendar**: Download `.ics` calendar files for any event.
+- 🖼️ **View Event Details**: See image, organizer contact, and full description in a modern popup view.
 
 ### 👩‍💼 For Organizers:
-- 🛠️ **Create/Edit/Delete Events**: Manage event details and images.
-- 📄 **View Registrations**: Access list of students registered for each event.
-- 🖼️ **Upload Event Image**: Event images stored and displayed dynamically.
+- 🛠️ **Create/Edit/Delete Events**: Manage event listings and images.
+- 📄 **View Registrations**: See list of students registered per event.
+- 🖼️ **Upload Event Images**: Each event has a visual preview.
 
 ---
 
 ## 🧠 Why This Project?
 
-This project demonstrates:
-- 🔐 **Role-based authentication**
-- ⚡ **Frontend-Backend Integration**
-- 🗃️ **CRUD operations with file upload handling**
-- 📊 **Dynamic UI with Tailwind CSS and FullCalendar.js**
-- 🎯 **Practical use of REST APIs & MySQL foreign key relationships**
+This project showcases:
+- 🔐 **Role-based authentication & redirection**
+- ⚡ **Frontend ↔ Backend Integration using REST API**
+- 🗃️ **CRUD operations & image upload with secure storage**
+- 💡 **Dynamic UI using Tailwind CSS and FullCalendar.js**
+- 🎯 **MySQL relationships, foreign keys & queries**
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Tech             | Role                          |
-|------------------|-------------------------------|
-| Python + Flask   | Backend Server & Routing      |
-| HTML/CSS + JS    | Frontend (Vanilla JS + Tailwind CSS) |
-| MySQL            | Database                      |
-| FullCalendar.js  | Event calendar integration    |
-| Jinja2           | Templating with Flask         |
+| Technology        | Description                    |
+|------------------|--------------------------------|
+| Python + Flask   | Backend server and APIs        |
+| HTML/CSS + JS    | Frontend UI (Vanilla JS + Tailwind) |
+| MySQL            | Relational database            |
+| FullCalendar.js  | Calendar view for events       |
+| Jinja2           | Flask templating engine        |
 
 ---
 
 ## 📁 Folder Structure
 
-events-dashboard-backend/
-│
-├── static/
-│ └── uploads/ # Uploaded event images
-├── templates/ # HTML frontend pages
-│ ├── index.html
-│ ├── login.html
-│ ├── student-dashboard.html
-│ ├── organizer-dashboard.html
-│ └── ...
-├── routes/
-│ ├── init.py
-│ ├── auth.py # Login/Register routes
-│ └── events.py # All event-related APIs
-├── db.py # DB connection logic
-├── app.py # Main Flask app entry
-└── README.md # You're reading it :)
 
-Screenshots 
+
+
+---
 
 ## 🎥 Project Screenshots
 
 ### 🏠 Home Page
 ![Home](home.png)
 
-
-
-
 ### 🔐 Login Page
-![Login](./login.png)
+![Login](login.png)
 
 ### 📝 Create Account
 ![Create Account](create-account.png)
 
 ### 🎯 Browse Events
-![Browse Events](./browse-events.png)
+![Browse Events](browse-events.png)
 
 ### 🧑‍💼 Organizer Dashboard
-![Organizer Dashboard](./Organizer-dashboard.png)
+![Organizer Dashboard](Organizer-dashboard.png)
 
 ### 🎓 Student Dashboard
-![Student Dashboard](./student-dashboard.png)
+![Student Dashboard](student-dashboard.png)
 
 ### 🔍 View Event
-![View Event](./view-event.png)
+![View Event](view-event.png)
 
-📖 How to Run Locally
+---
 
-Clone the repository
+## 📖 How to Run Locally
 
+### 🔄 Clone the repository
+
+```bash
 git clone https://github.com/EerthineniAnupama/College-Events-Dashboard.git
 cd College-Events-Dashboard
 
-Create and activate virtual environment (optional but recommended)
+🧪 Create & activate a virtual environment (optional but recommended)
 
 python -m venv venv
 venv\Scripts\activate    # Windows
 # or
 source venv/bin/activate  # Linux/Mac
 
-Install dependencies
+
+📦 Install dependencies
+
 
 pip install -r requirements.txt
 
