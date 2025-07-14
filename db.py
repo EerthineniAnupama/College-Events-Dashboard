@@ -1,23 +1,23 @@
-import mysql.connector
+import os
 from mysql.connector import pooling
 
-# Optional: Use connection pooling for efficiency
 dbconfig = {
-    "host": "localhost",
-    "user": "root",
-    "password": "anupama@50lpa",
-    "database": "events_db"
+    "host": os.environ.get("DB_HOST"),
+    "port": int(os.environ.get("DB_PORT", 3306)),
+    "user": os.environ.get("DB_USER"),
+    "password": os.environ.get("DB_PASSWORD"),
+    "database": os.environ.get("DB_NAME")
 }
 
-# Create a connection pool with a max of 5 connections
-connection_pool = pooling.MySQLConnectionPool(pool_name="events_pool",
-                                              pool_size=5,
-                                              **dbconfig)
+connection_pool = pooling.MySQLConnectionPool(
+    pool_name="events_pool",
+    pool_size=5,
+    **dbconfig
+)
 
 def get_db_connection():
     try:
-        conn = connection_pool.get_connection()
-        return conn
-    except mysql.connector.Error as err:
-        print("❌ MySQL connection failed:", err)
+        return connection_pool.get_connection()
+    except Exception as e:
+        print("❌ MySQL connection error:", e)
         return None

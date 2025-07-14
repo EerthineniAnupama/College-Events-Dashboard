@@ -59,7 +59,8 @@ def browse_events():
     return render_template("browse-events.html")
 
 # -------------------------------
-# Run Flask App
+# Run Flask App (✅ Production ready)
 # -------------------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # Railway sets PORT env variable
+    app.run(host="0.0.0.0", port=port)
