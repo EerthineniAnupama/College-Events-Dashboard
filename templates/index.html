@@ -68,9 +68,9 @@
         container.innerHTML = ""; // Clear previous content
 
         data.slice(0, 3).forEach(event => {
-          const imageSrc = event.image_url
-            ? event.image_url.replaceAll('\\\\', '/').replaceAll('\\', '/')
-            : '/static/uploads/default.png';
+          if (!event.image_url) return; // Skip events without image
+
+          const imageSrc = event.image_url.replaceAll('\\\\', '/').replaceAll('\\', '/');
 
           const card = document.createElement('div');
           card.className = "bg-white rounded-lg shadow-lg hover:shadow-xl transition overflow-hidden";

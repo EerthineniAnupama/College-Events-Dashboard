@@ -14,9 +14,11 @@ def register():
     password = data.get('password')
     role = data.get('role')
 
+    # Validation
     if not all([name, email, password, role]):
         return jsonify({"error": "All fields are required"}), 400
 
+    # Hash password
     hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
     conn = get_db_connection()
@@ -33,12 +35,11 @@ def register():
     except mysql.connector.errors.IntegrityError as e:
         if "Duplicate entry" in str(e):
             return jsonify({"error": "Email already exists"}), 400
-        return jsonify({"error": "Database error"}), 500
+        return jsonify({"error": "Database integrity error"}), 500
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return jsonify({"error": "Something went wrong"}), 500
+        print("❌ Exception during registration:", e)
+        return jsonify({"error": "Internal server error"}), 500
 
     finally:
         cursor.close()
@@ -51,6 +52,7 @@ def login():
     email = data.get('email')
     password = data.get('password')
 
+    # Validation
     if not email or not password:
         return jsonify({"error": "Email and password required"}), 400
 
@@ -71,8 +73,7 @@ def login():
             return jsonify({"error": "Invalid credentials"}), 401
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        print("❌ Exception during login:", e)
         return jsonify({"error": "Login failed"}), 500
 
     finally:

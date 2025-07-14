@@ -4,13 +4,18 @@ from routes.auth import auth_routes
 from routes.events import event_routes
 import os
 
-# Ensure templates are picked from the correct folder
+# -------------------------------
+# Initialize Flask App
+# -------------------------------
 TEMPLATE_DIR = os.path.join(os.getcwd(), "templates")
+STATIC_DIR = os.path.join(os.getcwd(), "static")
 
-app = Flask(__name__, static_folder='static',template_folder=TEMPLATE_DIR)
+app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
 CORS(app)
 
-# Register your API routes
+# -------------------------------
+# Register Blueprints
+# -------------------------------
 app.register_blueprint(auth_routes, url_prefix="/api/auth")
 app.register_blueprint(event_routes, url_prefix="/api/events")
 
@@ -49,12 +54,9 @@ def edit_event():
 def view_event(event_id):
     return render_template("view-event.html", event_id=event_id)
 
-
 @app.route("/browse-events")
 def browse_events():
     return render_template("browse-events.html")
-
-
 
 # -------------------------------
 # Run Flask App

@@ -54,17 +54,15 @@
 
   <!-- JS Logic -->
   <script>
-    // Get event and user data from localStorage
     const event = JSON.parse(localStorage.getItem("selectedEvent"));
     const user = JSON.parse(localStorage.getItem("user"));
-    
-    // Redirect if data is missing
+
     if (!event || !user || !user.email) {
       alert("User or event data missing. Redirecting...");
       window.location.href = "/browse-events";
     }
-    
-    // Populate modal with event data
+
+    // Populate event details
     document.getElementById("modalImage").src = event.image_url?.replaceAll("\\", "/") || "/static/default.jpg";
     document.getElementById("modalTitle").textContent = event.title;
     document.getElementById("modalDate").textContent = `📅 ${event.date}`;
@@ -73,18 +71,16 @@
     document.getElementById("organizer").textContent = event.organizer || "N/A";
     document.getElementById("contactEmail").textContent = event.contact_email || "N/A";
     document.getElementById("contactPhone").textContent = event.contact_phone || "N/A";
-    
-    // Set button handlers
+
+    // Set button actions
     document.getElementById("modalRegisterBtn").onclick = () => registerEvent(event.id);
     document.getElementById("modalUnregisterBtn").onclick = () => unregisterEvent(event.id);
     document.getElementById("modalCalendarBtn").onclick = () => addToCalendar(event);
-    
-    // Close modal function
+
     function closeEventModal() {
       window.location.href = "/browse-events";
     }
-    
-    // Load comments from API
+
     async function loadModalComments(eventId) {
       try {
         const res = await fetch(`/api/events/comments/${eventId}`);
@@ -97,25 +93,24 @@
         console.error("Error loading comments", e);
       }
     }
-    
-    // Post new comment
+
     async function postModalComment() {
       const content = document.getElementById("modalCommentInput").value.trim();
       if (!content || !user) return alert("Please login and write a comment!");
-      
+
       const payload = {
         event_id: event.id,
         email: user.email,
         content
       };
-      
+
       try {
         const res = await fetch("/api/events/comment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
-        
+
         if (res.ok) {
           document.getElementById("modalCommentInput").value = "";
           loadModalComments(event.id);
@@ -128,8 +123,7 @@
         console.error(err);
       }
     }
-    
-    // Register for event
+
     function registerEvent(id) {
       fetch("/api/events/register", {
         method: "POST",
@@ -137,17 +131,15 @@
         body: JSON.stringify({ event_id: id, student_email: user.email })
       }).then(res => res.json()).then(() => alert("✅ Registered!"));
     }
-    
-    // Unregister from event
+
     function unregisterEvent(id) {
       fetch("/api/events/unregister", {
-        method: "POST",
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ event_id: id, student_email: user.email })
       }).then(res => res.json()).then(() => alert("❌ Unregistered!"));
     }
-    
-    // Add event to calendar
+
     function addToCalendar(event) {
       const link = document.createElement("a");
       const icsData = `
@@ -155,13 +147,12 @@ BEGIN:VCALENDAR
 VERSION:2.0
 BEGIN:VEVENT
 SUMMARY:${event.title}
-DTSTART:${new Date(event.date).toISOString().replace(/[-:]/g, '').split('.')[0]}
+DTSTART:${event.date.replace(/-/g, "")}T090000
+DTEND:${event.date.replace(/-/g, "")}T100000
 DESCRIPTION:${event.description}
 LOCATION:${event.venue}
 END:VEVENT
-END:VCALENDAR
-      `.trim();
-      
+END:VCALENDAR`.trim();
       const blob = new Blob([icsData], { type: 'text/calendar' });
       link.href = URL.createObjectURL(blob);
       link.download = `${event.title}.ics`;
@@ -169,8 +160,7 @@ END:VCALENDAR
       link.click();
       document.body.removeChild(link);
     }
-    
-    // Load comments on page load
+
     loadModalComments(event.id);
   </script>
 </body>

@@ -15,27 +15,30 @@
   </nav>
 
   <!-- Main Section -->
-  <main class="max-w-2xl mx-auto bg-white p-8 mt-10 rounded shadow">
+  <main class="max-w-2xl mx-auto bg-white p-8 mt-10 rounded-xl shadow-lg">
     <h2 class="text-3xl font-semibold text-blue-700 mb-6">New Event Details</h2>
     
     <form id="eventForm" enctype="multipart/form-data" class="space-y-5">
-      <input type="text" name="title" placeholder="Event Title" required class="w-full border px-4 py-3 rounded text-lg" />
+      <input type="text" name="title" placeholder="🎯 Event Title" required class="w-full border px-4 py-3 rounded text-lg" />
       
-      <textarea name="description" placeholder="Event Description" required class="w-full border px-4 py-3 rounded text-lg"></textarea>
+      <textarea name="description" placeholder="📝 Event Description" required class="w-full border px-4 py-3 rounded text-lg"></textarea>
       
       <input type="date" name="date" required class="w-full border px-4 py-3 rounded text-lg" />
       
-      <input type="text" name="venue" placeholder="Venue" required class="w-full border px-4 py-3 rounded text-lg" />
+      <input type="text" name="venue" placeholder="📍 Venue" required class="w-full border px-4 py-3 rounded text-lg" />
       
-      <input type="url" name="registration_link" placeholder="Registration Link (optional)" class="w-full border px-4 py-3 rounded text-lg" />
+      <input type="url" name="registration_link" placeholder="🔗 Registration Link (optional)" class="w-full border px-4 py-3 rounded text-lg" />
       
-      <input type="email" name="contact_email" placeholder="Contact Email (optional)" class="w-full border px-4 py-3 rounded text-lg" />
+      <input type="email" name="contact_email" placeholder="📧 Contact Email (optional)" class="w-full border px-4 py-3 rounded text-lg" />
       
-      <input type="tel" name="contact_phone" placeholder="Contact Phone (optional)" class="w-full border px-4 py-3 rounded text-lg" />
+      <input type="tel" name="contact_phone" placeholder="📞 Contact Phone (optional)" class="w-full border px-4 py-3 rounded text-lg" />
 
-      <input type="file" name="image" accept="image/*" required class="w-full text-lg" />
+      <div>
+        <label class="block mb-2 text-lg font-medium text-gray-700">🖼️ Upload Event Image <span class="text-red-600">*</span></label>
+        <input type="file" name="image" accept="image/*" required class="block w-full text-lg border rounded p-2 bg-gray-50" />
+      </div>
       
-      <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 text-lg">
+      <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 text-lg">
         ➕ Create Event
       </button>
     </form>
@@ -58,6 +61,13 @@
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      
+      const imageFile = form.image.files[0];
+      if (!imageFile) {
+        alert("Please upload an image for the event.");
+        return;
+      }
+
       const formData = new FormData(form);
       formData.append("organizer", user.name);
 
