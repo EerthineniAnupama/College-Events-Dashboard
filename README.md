@@ -1,5 +1,9 @@
 # 🎓 College Events Dashboard
 
+
+
+🌐 **Live Demo:** [Click Here to Visit](http://college-events-dashboard-production.up.railway.app/)
+
 An interactive full-stack web application for managing and participating in college events. Built with **Flask** (Python), **HTML/CSS/JS**, and **MySQL**, this dashboard provides dedicated interfaces for both students and organizers.
 
 ---
