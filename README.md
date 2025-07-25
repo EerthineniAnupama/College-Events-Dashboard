@@ -1,6 +1,11 @@
 # 🎓 College Events Dashboard
 
 
+⚠️ Note:
+🚧 Deployment Status
+The live site is currently facing issues and is temporarily unavailable. We are actively working on resolving this. The project can still be run locally by following the steps below.
+
+
 
 🌐 **Live Demo:** [Click Here to Visit](https://web-production-b018.up.railway.app/)
 
