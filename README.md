@@ -1,13 +1,14 @@
 # 🎓 College Events Dashboard
 
+🎓 College Events Dashboard
+Tech Stack: Python, Flask, MySQL, HTML5, CSS3, JavaScript, Bootstrap, Jinja2, REST APIs
 
-⚠️ Note:
-🚧 Deployment Status
-The live site is currently facing issues and is temporarily unavailable. We are actively working on resolving this. The project can still be run locally by following the steps below.
+A full-stack event management system built for college use, enabling organizers to create, update, and manage events, and allowing students to browse, register, and interact through a clean and interactive interface. Includes role-based access, calendar integration, comment system, and image support for each event.
 
 
 
-🌐 **Live Demo:** [Click Here to Visit](https://web-production-b018.up.railway.app/)
+
+
 
 An interactive full-stack web application for managing and participating in college events. Built with **Flask** (Python), **HTML/CSS/JS**, and **MySQL**, this dashboard provides dedicated interfaces for both students and organizers.
 
@@ -92,16 +93,22 @@ This project showcases:
 ```bash
 git clone https://github.com/EerthineniAnupama/College-Events-Dashboard.git
 cd College-Events-Dashboard
+```
 
 🧪 Create & activate a virtual environment (optional but recommended)
+```bash
+
 
 python -m venv venv
-venv\Scripts\activate    # Windows
+venv\Scripts\activate    # On Windows
 # or
-source venv/bin/activate  # Linux/Mac
+source venv/bin/activate  # On Linux/Mac
+
+```
 
 
 📦 Install dependencies
+```bash
 
 
 pip install -r requirements.txt
@@ -109,13 +116,28 @@ pip install -r requirements.txt
 Start the Flask server
 
 python app.py
+```
 
-Open http://127.0.0.1:5000 in your browser and explore!
+Visit http://127.0.0.1:5000 in your browser to explore the app!
+
+---
 
 🌟 Final Note
+This project is built from scratch to showcase:
 
-This project is built from scratch to demonstrate full-stack development, API design, and real-world problem-solving. Perfect for showcasing backend logic, UI integration, database operations, and role-based functionalities.
+✅ Full-stack web development
 
-If you find this helpful or impressive, feel free to ⭐ star the repo!
+🧠 Backend logic with Flask
+
+🖼️ UI integration with clean frontend
+
+🛢️ MySQL database operations
+
+👥 Role-based functionalities (Students & Organizers)
+
+📅 Event scheduling, registration, and calendar view
+
+If you found this helpful or impressive, consider giving the repo a ⭐ star!
+
 
 
