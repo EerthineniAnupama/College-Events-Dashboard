@@ -123,6 +123,33 @@ Visit http://127.0.0.1:5000 in your browser to explore the app!
 
 ---
 
+
+
+✅ Key Features:
+
+🔐 Authentication & Role-Based Access – Separate dashboards and permissions for organizers and students
+
+🗓️ Event Calendar Integration – FullCalendar view for student-registered events
+
+📝 Event Creation & Editing – Organizers can manage full event lifecycle with image upload
+
+📤 RESTful API Backend – Clean Flask routes for all CRUD operations
+
+💬 Comment System – Students can post feedback under each event
+
+🎯 Smart Registration – Prevents duplicate registrations, supports unregistration
+
+📅 Add to Calendar – Allows users to add events directly to Google Calendar
+
+📷 Dynamic Event Images – Events dynamically display images from uploads
+
+🔍 Event Filtering – Search events by date, title, and keywords
+
+🧾 MySQL Integration – All event data, users, registrations, and comments stored in a normalized schema
+
+
+---
+
 🌟 Final Note
 This project is built from scratch to showcase:
 
