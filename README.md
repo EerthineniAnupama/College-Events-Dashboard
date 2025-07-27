@@ -10,6 +10,7 @@ A full-stack event management system built for college use, enabling organizers 
 
 
 
+
 An interactive full-stack web application for managing and participating in college events. Built with **Flask** (Python), **HTML/CSS/JS**, and **MySQL**, this dashboard provides dedicated interfaces for both students and organizers.
 
 ---
